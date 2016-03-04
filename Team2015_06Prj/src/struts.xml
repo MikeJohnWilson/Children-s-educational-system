@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+	<package name="UserLoginAndRegister"
+		namespace="/UserLoginAndRegisterNS" extends="struts-default">
+		<action name="LoginAction"
+			class="com.team_06.action.UserLoginPage">
+			<result name="input" type="dispatcher">/Login.jsp</result>
+			
+			<result name="error" type="dispatcher">/Login.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/DoQuestionNS</param>
+				<param name="actionName">
+					ShowQuestionTypeListAction
+				</param>
+			</result>
+		</action>
+		<action name="RegisterAction"
+			class="com.team_06.action.UserRegisterPage">
+			<result name="success" type="dispatcher">/Login.jsp</result>
+			<result name="input" type="dispatcher">
+				/Register.jsp
+			</result>
+			<result name="error" type="dispatcher">
+				/Register.jsp
+			</result>
+		</action>
+		<action name="ToUserRegisterPageAction"
+			class="com.team_06.action.ToUserRegisterPage">
+			<result name="register" type="dispatcher">
+				/Register.jsp
+			</result>
+		</action></package>
+	<package name="DoQuestion" namespace="/DoQuestionNS"
+		extends="struts-default">
+	<action name="ShowQuestionTypeListAction"
+		class="com.team_06.action.ShowQuestionTypeListPage">
+		<result name="success" type="dispatcher">
+			/QuestionTypeList.jsp
+		</result>
+	</action>
+	
+	<action name="GetOneQuestionAction"
+		class="com.team_06.action.GetOneQuestionPage">
+
+		<result name="ShapeClac" type="dispatcher">
+			/ShapeClac.jsp
+		</result>
+		<result name="ShapeJudge" type="dispatcher">
+			/ShapeJudge.jsp
+		</result>
+		<result name="SortNum" type="dispatcher">/SortNum.jsp</result>
+
+	</action>
+	<action name="SetOneQuestionAction"
+		class="com.team_06.action.SetOneQuestionPage">
+		<result name="success" type="redirectAction">
+			<param name="namespace">/ShowQuestionNS</param>
+			<param name="actionName">ShowOneQuestionAction</param>
+		</result>
+	</action></package>
+	<package name="ShowQuestion" namespace="/ShowQuestionNS"
+		extends="struts-default">
+	<action name="ShowOneQuestionAction"
+		class="com.team_06.action.ShowQuestionAnswerPage">
+		<result name="success" type="dispatcher">
+			/ShowAnswer.jsp
+		</result>
+	</action>
+	<action name="ShowAnswerListAction"
+		class="com.team_06.action.ShowQuestionAnswerListPage">
+		<result name="success" type="dispatcher">
+			/ShowAnswerList.jsp
+		</result>
+	</action>
+	<action name="NextPageAction"
+		class="com.team_06.action.ShowQuestionAnswerListPage"
+		method="nextPage">
+		<result name="success" type="dispatcher">
+			/ShowAnswerList.jsp
+		</result>
+		
+	</action>
+	<action name="BeforePageAction"
+		class="com.team_06.action.ShowQuestionAnswerListPage" method="beforePage">
+		<result name="success" type="dispatcher">
+			/ShowAnswerList.jsp
+		</result>
+	</action></package></struts>    

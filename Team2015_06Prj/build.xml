@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Team2015_06Prj"  default="rebuild" 
+    xmlns:jacoco="antlib:org.jacoco.ant" basedir=".">
+	<description>
+     项目ant处理
+    </description>
+	<!--所有目录信息-->
+	<!-- 库文件地址-->
+	<property name="lib.dir" location="${basedir}/lib"/>
+
+	<!-- 源代码和测试代码地址-->
+	<property name="src.dir" location="${basedir}/src"/>
+	<property name="test.dir" location="${basedir}/testsrc"/>
+	<!-- 源代码和测试代码class地址-->
+	<property name="srcbin.dir" location="${basedir}/srcbin"/>
+	<property name="testbin.dir" location="${basedir}/testbin"/>
+
+	<!-- 用于项目输出临时目录 -->
+	<property name="build.dir" value="${basedir}/build" description="输出目录"/>
+	<property name="build.web.dir" value="${build.dir}/WEB-INF" description="web配置输出目录"/>
+	<property name="build.web.class.dir" value="${build.web.dir}/classes" description="web类输出目录"/>
+	<property name="build.web.lib.dir" value="${build.web.dir}/lib" description="web引用jar输出目录"/>
+	<!-- web目录 -->
+	<property name="webRoot.dir" value="${basedir}/WebRoot" />
+	<property name="weblib.dir" value="${webRoot.dir}/WEB-INF/lib" />
+	<property name="web-info.dir" value="${webRoot.dir}/WEB-INF" />
+	<!-- 远程tomcat目录 -->
+	<property name="url" value="http://10.10.10.59:8090/manager/text" />
+	<property name="username" value="tomcat" />
+	<property name="password" value="tomcat" />
+	<property name="webpath" value="/Team2015_06Prj" />
+
+ 
+	<!--Junit报告文档地址   -->
+	<property name="JunitReport.dir" location="${basedir}/JunitReport" />
+	<!--覆盖率报告文档地址   -->
+	<property name="jacoco.dir" value="${basedir}/jacoco" />
+	<property name="CoverageReport.dir" location="${basedir}/CoverageReport" />
+	<property name="CoverageReport.file" location="${CoverageReport.dir}/jacoco.exec" />
+	<!--DOC 文档地址   -->
+	<property name="doc.dir" value="${basedir}/doc"/>
+
+	<!--=============================================================================-->
+ 
+	<path id="classpath.base" />
+	
+	<!-- Import JaCoCo Ant tasks -->
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="./lib/jacocoant.jar" />
+	</taskdef>
+
+	 
+	<!-- Import JUnit -->
+	<path id="classpath.test">
+		<pathelement location="${lib.dir}/junit-4.11-SNAPSHOT-20120805-1225.jar" />
+		<pathelement location="${lib.dir}/mockito-all-1.9.5-rc1.jar" />
+		<pathelement location="${lib.dir}/xwork-core-2.2.1.jar" />
+		<pathelement location="${lib.dir}/struts2-core-2.2.1.jar" />
+		
+		<pathelement location="${lib.dir}/mysql-connector-java-5.0.0-beta-bin.jar" />	
+		
+		<pathelement location="${lib.dir}/hamcrest-all-1.3.jar" />
+		<pathelement location="${lib.dir}/jacocoant.jar"/> 
+		
+		<pathelement location="${lib.dir}/dbunit-2.4.9.jar"/> 
+		<pathelement location="${lib.dir}/httpunit.jar"/> 
+		<pathelement location="${lib.dir}/slf4j-1.6.1-jul.jar"/>
+		<pathelement location="${lib.dir}/slf4j-api-1.6.1.jar"/>
+		<pathelement location="${lib.dir}/slf4j-log4j12-1.6.1.jar"/>
+		<pathelement location="${lib.dir}/slf4j-simple-1.6.1.jar"/> 
+		<pathelement location="${lib.dir}/log4j-1.2.16.jar"/> 
+		
+		<pathelement location="${src.dir}" />
+		<pathelement location="${test.dir}/" />
+		<pathelement location="${testbin.dir}/" />
+		<pathelement location="${srcbin.dir}" />
+		<path refid="classpath.base" />
+	</path>
+
+	<!-- target:清理原输出文件 -->
+	<target name="Clean" description="清理原输出文件">
+		<delete dir="${doc.dir}"/>
+		<delete dir="${srcbin.dir}"/>
+		<delete dir="${testbin.dir}"/>
+		<delete dir="${JunitReport.dir}"/>	 
+		<delete dir="${CoverageReport.dir}"/>
+	</target>
+
+	<!-- target:建立输出文件夹 -->
+	<target name="Init" description="建立输出文件夹" depends="Clean" >
+		<mkdir dir="${doc.dir}" />
+		<mkdir dir="${srcbin.dir}" />
+		<mkdir dir="${testbin.dir}" />
+		<mkdir dir="${JunitReport.dir}" />	 
+		<mkdir dir="${CoverageReport.dir}" />
+	</target>
+
+	<!-- target:建立源代码Doc文档-->
+	<target name="CreateDoc"  description="建立源代码Doc文档">
+		<javadoc destdir="${doc.dir}" encoding="GBK" docencoding="UTF-8">
+			<packageset dir="${src.dir}">
+				<include name="**"/>
+			</packageset>
+		</javadoc>
+	</target>
+
+	<!-- target:生成src class-->
+	<target name="SrcCompile"  description="生成src class" depends="Init">
+		<javac  srcdir="${src.dir}" 
+            destdir="${srcbin.dir}" 
+            debug="true" 
+            includeantruntime="true">
+		    <compilerarg line="-encoding GBK "/>  
+			<classpath refid="classpath.test" />
+		</javac> 
+	</target>
+
+	<!-- target:生成test class-->
+	<target name="TestCompile" description="生成test class" depends="Init">
+		<javac  srcdir="${test.dir}" 
+            destdir="${testbin.dir}" 
+            debug="true"  
+            includeantruntime="true">
+		    <compilerarg line="-encoding GBK "/>  
+			<classpath refid="classpath.test" />
+		</javac>
+	</target>
+
+	<!-- target:编译源代码和测试代码-->
+	<target name="AllCompile" description="编译源代码和测试代码" depends="SrcCompile, TestCompile">
+	</target>
+	<!-- target:测试覆盖率生成 -->
+	<target name="TestCoverage" description="测试覆盖率生成" depends="AllCompile">
+		<!--  Wrap JUnit test execution with the JaCoCo coverage task -->
+		<jacoco:coverage destfile="${CoverageReport.file}" 
+            classdumpdir ="${jacoco.dir}"  >
+			<junit fork="true" forkmode="once">
+				<classpath refid="classpath.test" />
+				<formatter
+                    type="brief"
+                    usefile="false" />
+				<!-- 自动找出要运行的测试 -->
+				<batchtest
+                    haltonfailure="no"
+                    todir="${JunitReport.dir}" >
+					<fileset dir="${testbin.dir}" >
+						<include name="**/*Test.class" />
+					</fileset>
+				</batchtest>
+			</junit>
+		</jacoco:coverage>
+	</target>
+
+	<!--target:测试覆盖率报告生成-->
+	<target name="CoverageReport"  description="测试覆盖率报告生成" depends="TestCoverage">
+		<!-- Create coverage report -->
+		<jacoco:report>
+			<!-- This task needs the collected execution data and ... -->
+			<executiondata>
+				<file file="${CoverageReport.file}" />
+			</executiondata>
+			<!-- the class files and optional source files ... -->
+			<structure name="test">
+				<classfiles>
+					<fileset dir="${testbin.dir}" />
+					<fileset dir="${srcbin.dir}" />
+				</classfiles>
+				<sourcefiles encoding="GBK">
+					<fileset dir="${src.dir}" />
+				</sourcefiles>
+			</structure>
+			<!-- to produce reports in different formats. -->
+			<html destdir="${CoverageReport.dir}" />
+			<csv destfile="${CoverageReport.dir}/report.csv" />
+			<xml destfile="${CoverageReport.dir}/report.xml" />
+		</jacoco:report>
+	</target>
+	<!--target:测试用例执行-->
+	<target name="JUnit" description="测试用例执行" depends="AllCompile">
+		<!--printsummary="yes" ： 在测试的最后一行生成一个单行的概要-->
+		<!--haltonerror="yes" haltonfailure="yes" ：如果失败或产生错误将停止编译-->
+		<!--fork="yes"　：每个测试分别使用一个单独的java虚拟机（JUM）-->
+		<junit printsummary="yes" haltonerror="yes" haltonfailure="yes" fork="yes">
+			<classpath refid="classpath.test" />
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml"  usefile="true"/>
+			<!--自动找出要运行的测试-->
+			<batchtest todir="${JunitReport.dir}" haltonfailure="no">
+				<fileset dir="${testbin.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+			<!--为本次任务添加你刚刚编译的类-->
+			<classpath>
+				<pathelement location="${srcbin.dir}"/>
+				<pathelement location="${testbin.dir}"/>
+			</classpath>
+		</junit>
+	</target>
+	<!-- target:生成junit测试报告 -->
+	<target name="JUnitReport" description="生成junit测试报告" depends="JUnit">
+		<junitreport todir="${JunitReport.dir}">
+			<fileset dir="${JunitReport.dir}">
+				<include name="*" />
+			</fileset>
+			<report format="frames" todir="${JunitReport.dir}" />
+		</junitreport>
+	</target>
+
+	<target name="CreateWar" description="将工程打成war包"  > 
+		<delete dir="${build.dir}"/>
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.web.dir}" />
+		<mkdir dir="${build.web.class.dir}" />
+		<mkdir dir="${build.web.lib.dir}" /> 
+		<copy todir="${build.web.class.dir}">
+			<!-- 复制源代码目录中所有的非java文件 -->
+			<fileset dir="${srcbin.dir}"  includes="**/*.class">
+			</fileset>
+		</copy> 
+		<copy todir="${build.web.class.dir}">
+			<!-- 复制源代码目录中所有的非java文件 -->
+			<fileset dir="${src.dir}"  excludes="**/*.java">
+			</fileset>
+		</copy> 
+		
+		<copy todir="${build.web.lib.dir}">
+				<!-- 复制源代码目录中所有的非java文件 -->
+				<fileset dir="${lib.dir}">
+				</fileset>
+		</copy> 
+		
+		<copy todir="${build.dir}">
+			<!-- WebRoot目录中所有的非java文件 -->
+			<fileset dir="${webRoot.dir}" excludes="**/*.class"  > 
+			</fileset>
+		</copy> 
+		<war destfile="${ant.project.name}.war" 
+			basedir="${build.dir}"
+			webxml="${build.web.dir}/web.xml"/>
+	</target>
+
+
+	<path id="catalina-ant">
+	   <fileset  dir="${lib.dir}">
+	       <include name="catalina-ant.jar"/>
+	       <include name="tomcat-coyote.jar"/>
+	       <include name="tomcat-util.jar"/>
+           <include name="tomcat-juli.jar"/>
+	   	</fileset>
+	  </path> 
+	 
+  
+	 <taskdef file="tomcatTasks.properties">
+	  	<classpath refid="catalina-ant" />
+	  </taskdef> 
+	
+	
+	<target name="undeploy" description="移除Web项目" >
+		<undeploy url="${url}" username="${username}" password="${password}" path="${webpath}" />
+	</target>
+
+	<target name="deploy" description="安装web项目"   >
+		<deploy url="${url}" username="${username}" password="${password}" path="${webpath}" war="${basedir}/${ant.project.name}.war" />
+	</target>
+
+	<target name="reload" description="重新加载web项目"  >
+		<reload  url="${url}" username="${username}" password="${password}" path="${webpath}"/>
+	</target> 
+	<target name="Redeploy" description="生成war，移除并重新安装加载web项目"  >
+		<antcall target="CreateWar"/>
+		 <antcall target="undeploy"/> 
+		<antcall target="deploy"/>
+		<antcall target="reload"/> 
+	</target>
+ 
+	<!--Default task-->
+	<target name="rebuild" depends="Clean, Init, 
+
+    	 AllCompile,TestCoverage,CoverageReport,JUnit ,JUnitReport,CreateDoc,CreateWar">
+
+
+	</target>  
+</project>
+
+
+

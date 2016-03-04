@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Struts2Diagram version="2.0">
+  <package name="UserLoginAndRegister" location="17,44" size="320,380">
+    <action name="LoginAction" location="80,81" size="150,83">
+      <result name="input">
+        <resourceEdge source="input" routing="0" target="Login.jsp" />
+      </result>
+      <result name="error">
+        <resourceEdge source="error" routing="0" target="Login.jsp" />
+      </result>
+      <result name="success" />
+    </action>
+    <action name="RegisterAction" location="166,293" size="150,83">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="Login.jsp" />
+      </result>
+      <result name="input">
+        <resourceEdge source="input" routing="0" target="Register.jsp" />
+      </result>
+      <result name="error">
+        <resourceEdge source="error" routing="0" target="Register.jsp" />
+      </result>
+    </action>
+    <action name="ToUserRegisterPageAction" location="131,223" size="150,41">
+      <result name="register">
+        <resourceEdge source="register" routing="0" target="Register.jsp" />
+      </result>
+    </action>
+  </package>
+  <package name="DoQuestion" location="41,390" size="305,640">
+    <action name="ShowQuestionTypeListAction" location="118,160" size="150,41">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="QuestionTypeList.jsp" />
+      </result>
+    </action>
+    <action name="GetOneQuestionAction" location="98,229" size="150,83">
+      <result name="ShapeClac">
+        <resourceEdge source="ShapeClac" routing="0" target="ShapeClac.jsp" />
+      </result>
+      <result name="ShapeJudge">
+        <resourceEdge source="ShapeJudge" routing="0" target="ShapeJudge.jsp" />
+      </result>
+      <result name="SortNum">
+        <resourceEdge source="SortNum" routing="0" target="SortNum.jsp" />
+      </result>
+    </action>
+    <action name="SetOneQuestionAction" location="96,437" size="150,41">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="ShowOneQuestionAction" namespace="/ShowQuestionNS" />
+      </result>
+    </action>
+  </package>
+  <package name="ShowQuestion" location="377,774" size="202,301">
+    <action name="ShowOneQuestionAction" location="40,54" size="150,41">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="ShowAnswer.jsp" />
+      </result>
+    </action>
+    <action name="ShowAnswerListAction" location="36,105" size="150,41">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="ShowAnswerList.jsp" />
+      </result>
+    </action>
+    <action name="NextPageAction" location="37,157" size="150,41">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="ShowAnswerList.jsp" />
+      </result>
+    </action>
+    <action name="BeforePageAction" location="27,233" size="150,41">
+      <result name="success">
+        <resourceEdge source="success" routing="0" target="ShowAnswerList.jsp" />
+      </result>
+    </action>
+  </package>
+  <webResource name="Login.jsp" path="/Login.jsp" location="365,89" size="150,55" />
+  <webResource name="Register.jsp" path="/Register.jsp" location="439,249" size="150,55" />
+  <webResource name="QuestionTypeList.jsp" path="/QuestionTypeList.jsp" location="419,464" size="150,55" />
+  <webResource name="ShapeJudge.jsp" path="/ShapeJudge.jsp" location="358,715" size="150,55" />
+  <webResource name="SortNum.jsp" path="/SortNum.jsp" location="356,629" size="150,55" />
+  <webResource name="ShapeClac.jsp" path="/ShapeClac.jsp" location="356,544" size="150,55" />
+  <webResource name="ShowAnswer.jsp" path="/ShowAnswer.jsp" location="651,819" size="150,55" />
+  <webResource name="ShowAnswerList.jsp" path="/ShowAnswerList.jsp" location="663,903" size="150,55" />
+</Struts2Diagram>
+
